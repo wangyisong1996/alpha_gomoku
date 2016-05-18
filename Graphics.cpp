@@ -1,4 +1,4 @@
-#include "graphics.h"
+#include "Graphics.h"
 
 #include <GLFW/glfw3.h>
 #include <cstdlib>
