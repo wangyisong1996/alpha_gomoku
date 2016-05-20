@@ -119,4 +119,9 @@ inline v2d max(const v2d &a, const v2d &b) {
 	return v2d(std::max(a.x, b.x), std::max(a.y, b.y));
 }
 
+template <class T>
+inline T clamp(const T &a, const T &L, const T &R) {
+	return std::max(L, std::min(R, a));
+}
+
 #endif

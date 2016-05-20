@@ -19,17 +19,20 @@ class Graphics {
 	
 	// coordinates: (0, 0) ~ (x / y, 1)
 	void draw_line(double x1, double y1, double x2, double y2);
+	void draw_line(double x1, double y1, double x2, double y2, float r, float g, float b);
 	
 	void draw_rect(double x1, double y1, double x2, double y2,
 		double x3, double y3, double x4, double y4);
 	
 	void draw_line(const v2d &a, const v2d &b);
+	void draw_line(const v2d &a, const v2d &b, float R, float G, float B);
 	void draw_rect(const v2d &a, const v2d &b, const v2d &c, const v2d &d);
 	
 	void draw_text_p(int x, int y, const char *s);
 	void draw_text(const v2d &a, const char *s);
 	
 	void draw_circle(const v2d &a, double R);
+	void draw_circle(const v2d &a, double R, float r, float g, float b);
 	
 	void draw_polygon(int n, const v2d *A);
 	

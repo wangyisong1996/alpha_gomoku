@@ -88,17 +88,16 @@ void Graphics::main_loop(bool (*call_back)()) {
 }
 
 
-void Graphics::draw_line(double x1, double y1, double x2, double y2) {
-	// x1 = x1 * render_y;
-	// y1 = (1.0 - y1) * render_y;
-	// x2 = x2 * render_y;
-	// y2 = (1.0 - y2) * render_y;
-	// draw_line_p(x1, y1, x2, y2);
+void Graphics::draw_line(double x1, double y1, double x2, double y2, float r, float g, float b) {
 	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 1.0f);
+	glColor3f(r, g, b);
 	glVertex2f(x1, y1);
 	glVertex2f(x2, y2);
 	glEnd();
+}
+
+void Graphics::draw_line(double x1, double y1, double x2, double y2) {
+	draw_line(x1, y1, x2, y2, 0.0f, 0.0f, 0.0f);
 }
 
 void Graphics::draw_rect(double x1, double y1, double x2, double y2,
@@ -125,8 +124,12 @@ void Graphics::draw_rect(double x1, double y1, double x2, double y2,
 	glEnd();
 }
 
+void Graphics::draw_line(const v2d &a, const v2d &b, float R, float G, float B) {
+	draw_line(a.x, a.y, b.x, b.y, R, G, B);
+}
+
 void Graphics::draw_line(const v2d &a, const v2d &b) {
-	draw_line(a.x, a.y, b.x, b.y);
+	draw_line(a, b, 0.0f, 0.0f, 0.0f);
 }
 
 void Graphics::draw_rect(const v2d &a, const v2d &b,
@@ -142,13 +145,13 @@ void Graphics::draw_text(const v2d &a, const char *s) {
 	// draw_text_p(a.x * render_y, (1.0 - a.y) * render_y, s);
 }
 
-void Graphics::draw_circle(const v2d &a, double R) {
+void Graphics::draw_circle(const v2d &a, double R, float r, float g, float b) {
 	const int cnt = 36;
 	double s = sin(2.0 * PI / cnt), c = cos(2.0 * PI / cnt);
 	v2d tmp(R, 0);
 	
 	glBegin(GL_POLYGON);
-	glColor3f(0.5f, 0.5f, 1.0f);
+	glColor3f(r, g, b);
 	for (int i = 0; i < cnt; i++) {
 		glVertex2f(a.x + tmp.x, a.y + tmp.y);
 		tmp = Rotate(tmp, s, c);
@@ -163,6 +166,10 @@ void Graphics::draw_circle(const v2d &a, double R) {
 		tmp = Rotate(tmp, s, c);
 	}
 	glEnd();
+}
+
+void Graphics::draw_circle(const v2d &a, double R) {
+	draw_circle(a, R, 0.0f, 0.0f, 0.0f);
 }
 
 void Graphics::draw_polygon(int n, const v2d *A) {

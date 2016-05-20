@@ -3,6 +3,11 @@ Alpha_Gomoku
 
 Gomoku AIs by Deep Learning and UCT
 
-膜
+============
+
+Requirements:
+	GLFW3 library
+
+
 
 
