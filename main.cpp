@@ -63,26 +63,26 @@ void switch_player(int player);
 void start_game(bool is_black_human, bool is_white_human) {
 	is_human[BLACK_PLAYER] = is_black_human;
 	is_human[WHITE_PLAYER] = is_white_human;
-	
+
 	for (int i = 0; i < 2; i++) {
 		cursor_pos_x[i] = cursor_pos_y[i] = 7;
-		
+
 		if (!is_human[i]) {
 			AIs[i] = new RandomAI();
 			AIs[i]->init(i);
 		}
 	}
-	
+
 	last_player_x = last_player_y = -1;
-	
+
 	memset(board, 0, sizeof(board));
-	
+
 	// for (int i = 0; i < BOARD_SIZE; i++) {
 	// 	for (int j = 0; j < BOARD_SIZE; j++) {
 	// 		board[i][j] = rand() % 3;
 	// 	}
 	// }
-	
+
 	switch_player(BLACK_PLAYER);
 }
 
@@ -96,16 +96,16 @@ void draw_frame_fixed(double x, double y, double size, float r, float g, float b
 
 void draw_frame(double x, double y, double size, float r, float g, float b) {
 	size *= 0.25;
-	
+
 	::g->draw_line(x + size * 2, y + size, x + size * 2, y + size * 2, r, g, b);
 	::g->draw_line(x + size * 2, y + size * 2, x + size, y + size * 2, r, g, b);
-	
+
 	::g->draw_line(x - size * 2, y + size, x - size * 2, y + size * 2, r, g, b);
 	::g->draw_line(x - size * 2, y + size * 2, x - size, y + size * 2, r, g, b);
-	
+
 	::g->draw_line(x + size * 2, y - size, x + size * 2, y - size * 2, r, g, b);
 	::g->draw_line(x + size * 2, y - size * 2, x + size, y - size * 2, r, g, b);
-	
+
 	::g->draw_line(x - size * 2, y - size, x - size * 2, y - size * 2, r, g, b);
 	::g->draw_line(x - size * 2, y - size * 2, x - size, y - size * 2, r, g, b);
 }
@@ -115,15 +115,15 @@ int winner_x0, winner_y0, winner_x1, winner_y1;
 
 void render_game() {
 	g->draw_line(v2d(1, 0), v2d(1, 1));
-	
+
 	double tmp = 1.0 / (BOARD_SIZE + 1);
-	
+
 	for (int i = 1; i <= BOARD_SIZE; i++) {
 		double t = i * tmp;
 		g->draw_line(v2d(t, 0), v2d(t, 1), 0.5f, 0.5f, 0.5f);
 		g->draw_line(v2d(0, t), v2d(1, t), 0.5f, 0.5f, 0.5f);
 	}
-	
+
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		double y = (BOARD_SIZE - i) * tmp;
 		for (int j = 0; j < BOARD_SIZE; j++) {
@@ -136,17 +136,17 @@ void render_game() {
 			}
 		}
 	}
-	
+
 	int id = game_state == BLACK_TURN ? BLACK_PLAYER : WHITE_PLAYER;
-	
+
 	if (game_state == GAME_OVER) {
 		id = winner;
 	}
-	
+
 	double y = (BOARD_SIZE - cursor_pos_x[id ^ 1]) * tmp;
 	double x = (cursor_pos_y[id ^ 1] + 1) * tmp;
 	draw_frame_fixed(x, y, tmp * 0.9, 0.7f, 0.7f, 0.7f);
-	
+
 	y = (BOARD_SIZE - cursor_pos_x[id]) * tmp;
 	x = (cursor_pos_y[id] + 1) * tmp;
 	draw_frame(x, y, tmp * (0.9 + 0.1 * sin((t_now - t_turn) * 2 * PI / 0.5)), 0.1f, 0.1f, 0.1f);
@@ -177,10 +177,10 @@ void switch_player(int player) {
 
 bool check_wins(int player) {
 	int val = player == BLACK_PLAYER ? BLACK_GRID : WHITE_GRID;
-	
+
 	const int dx[4] = {1, 1, 0, -1};
 	const int dy[4] = {0, 1, 1, 1};
-	
+
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (board[i][j] != val) continue;
@@ -205,7 +205,7 @@ bool check_wins(int player) {
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -215,22 +215,22 @@ bool check_game_over() {
 
 void do_move(int player, int x, int y) {
 	debug("move %d %d %d\n", player, x, y);
-	
+
 	if (board[x][y] != EMPTY_GRID) {
 		// invalid move ...
 		game_state = GAME_OVER;
 		winner_x0 = -1;
 		return;
 	}
-	
+
 	board[x][y] = player == BLACK_PLAYER ? BLACK_GRID : WHITE_GRID;
-	
+
 	last_player_x = x;
 	last_player_y = y;
-	
+
 	cursor_pos_x[player] = x;
 	cursor_pos_y[player] = y;
-	
+
 	if (check_game_over()) {
 		game_state = GAME_OVER;
 	} else {
@@ -256,7 +256,7 @@ void process_game_not_started() {
 
 void process_black_turn() {
 	render_game();
-	
+
 	if (is_human[BLACK_PLAYER]) {
 		if (check_key(GLFW_KEY_SPACE)) {
 			int x = cursor_pos_x[BLACK_PLAYER];
@@ -272,7 +272,7 @@ void process_black_turn() {
 			} else if (check_key(GLFW_KEY_UP)) {
 				--cursor_pos_x[BLACK_PLAYER];
 			} else if (check_key(GLFW_KEY_DOWN)) {
-				++cursor_pos_x[BLACK_PLAYER]; 
+				++cursor_pos_x[BLACK_PLAYER];
 			}
 			cursor_pos_x[BLACK_PLAYER] = clamp(cursor_pos_x[BLACK_PLAYER], 0, BOARD_SIZE - 1);
 			cursor_pos_y[BLACK_PLAYER] = clamp(cursor_pos_y[BLACK_PLAYER], 0, BOARD_SIZE - 1);
@@ -288,7 +288,7 @@ void process_black_turn() {
 
 void process_white_turn() {
 	render_game();
-	
+
 	if (is_human[WHITE_PLAYER]) {
 		if (check_key(GLFW_KEY_SPACE)) {
 			int x = cursor_pos_x[WHITE_PLAYER];
@@ -304,7 +304,7 @@ void process_white_turn() {
 			} else if (check_key(GLFW_KEY_UP)) {
 				--cursor_pos_x[WHITE_PLAYER];
 			} else if (check_key(GLFW_KEY_DOWN)) {
-				++cursor_pos_x[WHITE_PLAYER]; 
+				++cursor_pos_x[WHITE_PLAYER];
 			}
 			cursor_pos_x[WHITE_PLAYER] = clamp(cursor_pos_x[WHITE_PLAYER], 0, BOARD_SIZE - 1);
 			cursor_pos_y[WHITE_PLAYER] = clamp(cursor_pos_y[WHITE_PLAYER], 0, BOARD_SIZE - 1);
@@ -320,31 +320,32 @@ void process_white_turn() {
 
 void process_game_over() {
 	render_game();
-	
+
 	if (winner_x0 >= 0) {
 		double tmp = 1.0 / (BOARD_SIZE + 1);
-		
+
 		double y0 = (BOARD_SIZE - winner_x0) * tmp;
 		double x0 = (winner_y0 + 1) * tmp;
-		
+
 		double y1 = (BOARD_SIZE - winner_x1) * tmp;
 		double x1 = (winner_y1 + 1) * tmp;
-		
+
 		g->draw_line(x0, y0, x1, y1, 0.0f, 1.0f, 0.0f);
-		
+
 	}
-	
+
 	if (check_key(GLFW_KEY_ESCAPE)) {
 		game_state = GAME_NOT_STARTED;
 	}
 }
 
 bool loop_func() {
-	
-	t_now = clock() / (double)CLOCKS_PER_SEC;
-	
+
+	// t_now = 10.0 * (double)clock() / (double)CLOCKS_PER_SEC;
+    t_now = glfwGetTime();
+
 	check_key_states();
-	
+
 	if (game_state == GAME_NOT_STARTED) {
 		process_game_not_started();
 	} else if (game_state == BLACK_TURN) {
@@ -356,14 +357,14 @@ bool loop_func() {
 	} else {
 		// WTF??
 	}
-	
+
 	return true;
 }
 
 int main() {
 	g = new Graphics("Alpha Gomoku", 800, 600);
-	
+
 	g->main_loop(loop_func);
-	
+
 	delete g;
 }
