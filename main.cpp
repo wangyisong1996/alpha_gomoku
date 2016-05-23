@@ -3,7 +3,7 @@
 #include "math.h"
 #include "BasicAI.h"
 
-#include "RandomAI.h"
+#include "NormalAI.h"
 
 #include <GLFW/glfw3.h>
 
@@ -68,7 +68,7 @@ void start_game(bool is_black_human, bool is_white_human) {
 		cursor_pos_x[i] = cursor_pos_y[i] = 7;
 
 		if (!is_human[i]) {
-			AIs[i] = new RandomAI();
+			AIs[i] = new NormalAI();
 			AIs[i]->init(i);
 		}
 	}

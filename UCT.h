@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include <cstdlib>
+#include <ctime>
 #include "Constants.h"
 #include "State.h"
 #include "Rng.h"
