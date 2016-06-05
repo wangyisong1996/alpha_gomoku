@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 
-NormalAI::NormalAI() {
+NormalAI::NormalAI() : round(0) {
 	memset(board, 0, sizeof(board));
 	last_x = -1, last_y = -1;	
 }
@@ -24,16 +24,22 @@ void NormalAI::init(int player) {
 
 void NormalAI::opponent_step(int x, int y, int player) {
 	board[x][y] = oppo_grid;
-	last_x = x, last_y = y;
-	// std::cout << x << ", " << y << std::endl;
+	last_x = x;
+	last_y = y;
+	++round;
 }
 
 bool NormalAI::get_step(int &x, int &y) {
-	State root_state(this->board, player, last_x, last_y);
-	tree search_tree(root_state);
-	Point p = search_tree.uct();
-	x = p.x, y = p.y;
-	last_x = x, last_y = y;
+	Point p = Point(BOARD_SIZE / 2, BOARD_SIZE / 2);
+	if (round != 0) {
+		State root_state(this->board, player, last_x, last_y);
+		Tree search_tree(root_state);
+		p = search_tree.UCT();
+	} 
+	std::cout << p << std::endl;
+	last_x = x = p.x;
+	last_y = y = p.y;
+	++round;
 	this->board[x][y] = my_grid;
 	return true;
 }

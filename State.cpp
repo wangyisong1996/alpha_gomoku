@@ -1,21 +1,24 @@
 #include "State.h"
 #include <cstring>
 #include <vector>
+#include <random>
+#include <algorithm>
+
 using namespace std;
 
 const int State::TIE = 4;
+const int State::px[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+const int State::py[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 
-State::State(const int board_[][BOARD_SIZE], const int player_,
-             const int last_x, const int last_y)
-    : color(player_ + 1), winner(EMPTY_GRID), lastX(last_x), lastY(last_y) {
+State::State(const int board_[][BOARD_SIZE], const int player,
+             const int lastX, const int lastY)
+    : color(player + 1), winner(EMPTY_GRID), lastX(lastX), lastY(lastY) {
     memcpy(board, board_, sizeof(board));
     memset(occupy, 0, sizeof(occupy));
     for (int i = 0; i < BOARD_SIZE; ++i) {
         for (int j = 0; j < BOARD_SIZE; ++j) {
-            // cout << board_[i][j] << " ";
             if (board_[i][j] != EMPTY_GRID) occupy[i][j] = true;
         }
-        // cout << endl;
     }
 }
 
@@ -31,18 +34,40 @@ bool State::tie() const {
 
 vector<Point> State::all_move() const {
     vector<Point> move;
-    move.reserve(BOARD_SIZE * BOARD_SIZE);
+    move.reserve(10);
     if (winner == EMPTY_GRID) {
-        for (int i = 0; i < BOARD_SIZE; ++i)
+        for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
-                // if (!occupy[i][j])
-                // move.push_back(Point(i, j));
-                // else
-                // cout << "(" << i << "," << j << ")" << endl;
-                if (board[i][j] == EMPTY_GRID) move.push_back(Point(i, j));
+                if (board[i][j] == EMPTY_GRID) {
+                    for (int k = 0; k < 8; ++k) {
+                        int tx = i + px[k];
+                        int ty = j + py[k];
+                        if (tx < 0 || tx > 14 || ty < 0 || ty > 14) {
+                            continue;
+                        } else if (board[tx][ty] != EMPTY_GRID) {
+                            move.push_back(Point(i, j));
+                            break;
+                        }
+                    }
+                }
             }
+        }
     }
+    // static char symbol[] = {'.', 'X', 'O'};
+    //     for (int i = 0; i < BOARD_SIZE; ++i) {
+    //         for (int j = 0; j < BOARD_SIZE; ++j) {
+    //             cout << symbol[board[i][j]] << " ";
+    //         }
+    //         cout << std::endl;
+    //     }
 
+    // if (move.empty()) move.push_back(Point(BOARD_SIZE / 2, BOARD_SIZE / 2));
+    // for (auto&& i : move) {
+    //     cout << i << endl;
+    // }
+    // cout << "---------------" << endl;
+    // getchar();
+    // random_shuffle(move.begin(), move.end());
     return move;
 }
 
@@ -54,11 +79,6 @@ bool State::move(const Point& p) {
     color = (color == BLACK_GRID) ? WHITE_GRID : BLACK_GRID;
     find_winner();
     return true;
-}
-
-// TODO: implement
-int State::check_move(const Point& p) const {
-    // int player = EMPTY_GRID;
 }
 
 int State::find_winner() {

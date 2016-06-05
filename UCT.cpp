@@ -2,76 +2,43 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include <cassert>
 #include "math.h"
+#include "node.h"
 using namespace std;
 
-Xorshift tree::rand(233, 12343, 5646546, 123446543);
+Xorshift Tree::random(32563345, 12343, 5646546, 123446543);
 
-tree_node::tree_node(const State& s, const Point& p, tree_node* parent)
-    : win(0.0),
-      visit(0.0),
-      score(0.0),
-      move_from(p),
-      parent(parent),
-      expended(false),
-      has_child(false),
-      move(s.all_move()),
-      color(s.get_color()) {
-        if (move.empty())
-            expended = true;
-      }
 
-tree_node::~tree_node() {
-    for (auto&& i : children) {
-        delete i;
-    }
+Tree::Tree(const State& s) : root_state(s) {
+    max_itr = 100000;
+    max_time = 5.0;
+    root = new Node(s, Point(-1, -1));
 }
 
-tree_node* tree_node::add_child(const State& s, const Point& p) {
-    tree_node* child = new tree_node(s, p, this);
-    children.push_back(child);
-    has_child = true;
-    return child;
+Tree::~Tree() { destory(root); }
+
+void Tree::destory(Node* p) {
+    if (!p) return;
+    destory(p->children);
+    destory(p->sibling);
+    delete p;
 }
 
-Point tree_node::get_move() {
-    Point p = move.back();
-    move.pop_back();
-    if (move.empty()) expended = true;
-    return p;
-}
-
-tree_node* tree_node::select_child(const double c) {
-    double inv = 0.0;
-    for (auto&& i : children) {
-        inv = 1.0 / i->visit;
-        i->score = i->win * inv + sqrt(c * log(this->visit) * inv);
-    }
-    return *max_element(
-        children.begin(), children.end(),
-        [](tree_node* a, tree_node* b) { return a->score < b->score; });
-}
-
-tree::tree(const State& s) : root_state(s), root(s, Point(-1, -1)) {
-    max_itr = 400000;
-    max_time = 10.0;
-}
-
-tree::~tree() {}
-
-Point tree::uct() {
-    clock_t max_clock = clock() + clock_t(max_time * CLOCKS_PER_SEC);
+Point Tree::UCT() {
     Point p(0, 0);
-    // cout << root_state << endl;
+    clock_t max_clock = clock() + clock_t(max_time * CLOCKS_PER_SEC);
     for (int itr = 0; itr < max_itr; ++itr) {
         State state = root_state;
-        tree_node* node = &root;
-
+        Node* node = root;
         // Tree Policy
         while (!node->terminal()) {
             if (node->extensive()) {
                 // expansion
                 p = node->get_move();
+                state.move(p);
+                // cout << state << endl << endl;
+                // getchar();
                 node = node->add_child(state, p);
                 break;
             } else {
@@ -86,7 +53,7 @@ Point tree::uct() {
                 p = random_move();
             } while (!state.can_move(p));
             state.move(p);
-            // cout << state << endl;
+            // cout << state << endl << endl;
         }
 
         // back propagation
@@ -98,21 +65,21 @@ Point tree::uct() {
         }
 
         if (!(itr & 255) && clock() > max_clock) {
+            cout << "Iteration:" << itr << endl;
             break;
         }
     }
-    // for (auto&& i : root.children) {
-    //     if (1) {
-    //         State s = root_state;
-    //         s.move(i->from());
-    //         if (s.get_winner() == root.color) {
-    //             cout << s << endl;
-    //             if (i->terminal())
-    //                 cout << "terminal!" << endl;
-    //             p = i->from();
-    //             break;
-    //         }
-    //     }
+   
+    // Node* ptr = root->children;
+    // while (ptr != nullptr) {
+    //     cout << "Child from " << ptr->from();
+    //     cout << "win: " << ptr->win << endl;
+    //     cout << "visit: " << ptr->visit << endl;
+    //     cout << "winning rate: " << ptr->win / ptr->visit << endl;
+    //     cout << "score: " << ptr->score << endl;
+    //     cout << endl;
+    //     ptr = ptr->sibling;
     // }
-    return root.select_child(0.0)->from();
+    // getchar();
+    return root->select_child(0.0)->from();
 }

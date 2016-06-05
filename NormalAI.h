@@ -1,7 +1,7 @@
-#ifndef NORMAL_AI_H
-#define NORMAL_AI_H
+#ifndef __NORMAL_AI_H__
+#define __NORMAL_AI_H__
 
-#include "Rng.h"
+#include "RNG.h"
 #include "Constants.h"
 #include "BasicAI.h"
 
@@ -17,6 +17,7 @@ public:
 private:
 	int board[BOARD_SIZE][BOARD_SIZE];
 	int player;
+	int round;
 	int my_grid;
 	int oppo_grid;
 	int last_x, last_y;

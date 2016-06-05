@@ -1,5 +1,5 @@
-#ifndef RNG_H
-#define RNG_H
+#ifndef __RNG_H__
+#define __RNG_H__
 
 #include <cstdint>
 

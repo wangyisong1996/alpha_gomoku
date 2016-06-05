@@ -1,65 +1,33 @@
-#ifndef UCT_H
-#define UCT_H
+#ifndef __UCT_H__
+#define __UCT_H__
 
-#include <list>
-#include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
+#include <iostream>
 #include "Constants.h"
+#include "RNG.h"
 #include "State.h"
-#include "Rng.h"
+#include "node.h"
 
-class tree;
+class Node;
 
-class tree_node {
+class Tree {
 public:
-    tree_node(const State& s, const Point& p = Point(-1, -1), tree_node* parent = nullptr);
-    ~tree_node();
+    Tree(const State& s);
+    ~Tree();
 
-    tree_node* add_child(const State& s, const Point& p);
-
-    bool leaf() { return !has_child; }
-    bool terminal() { return expended && !has_child; }
-    bool extensive() { return !expended; }
-
-    void update(double reward) {
-    	++visit;
-    	win += reward;
-    }
-
-    Point get_move();
-    Point from() const { return move_from; }
-    tree_node* select_child(double c = 7.0);
+    Point UCT();
 
 private:
-    friend class tree;
-    std::vector<tree_node*> children;
-    std::vector<Point> move;
-    tree_node* parent;
-    Point move_from;
-
-    double win, visit, score;
-    int color;
-    // fully expended
-    bool expended;
-    bool has_child;
-    // tree_node *parent, *sibling, *children;
-};
-
-class tree {
-public:
-    tree(const State& s);
-    ~tree();
-
-    Point uct();
-
-private:
-    static Xorshift rand;
-	// naive rand
+    void destory(Node* p);
+    
     Point random_move() {
-        return Point(rand.rand() % BOARD_SIZE, rand.rand() % BOARD_SIZE);
+        return Point(random.rand() % BOARD_SIZE, random.rand() % BOARD_SIZE);;
     }
-    tree_node root;
+
+    static Xorshift random;
+    Node* root;
     State root_state;
 
     int max_itr;
