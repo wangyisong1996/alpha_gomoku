@@ -35,8 +35,7 @@ bool NormalAI::get_step(int &x, int &y) {
 		State root_state(this->board, player, last_x, last_y);
 		Tree search_tree(root_state);
 		p = search_tree.UCT();
-	} 
-	std::cout << p << std::endl;
+	}
 	last_x = x = p.x;
 	last_y = y = p.y;
 	++round;

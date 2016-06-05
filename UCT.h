@@ -14,7 +14,7 @@ class Node;
 
 class Tree {
 public:
-    Tree(const State& s);
+    Tree(const State& s, const int max_itr = 100000, const double max_time = 2.0);
     ~Tree();
 
     Point UCT();

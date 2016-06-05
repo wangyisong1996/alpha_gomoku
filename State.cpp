@@ -1,8 +1,8 @@
 #include "State.h"
-#include <cstring>
-#include <vector>
-#include <random>
 #include <algorithm>
+#include <cstring>
+#include <random>
+#include <vector>
 
 using namespace std;
 
@@ -10,8 +10,8 @@ const int State::TIE = 4;
 const int State::px[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 const int State::py[8] = {0, 1, 1, 1, 0, -1, -1, -1};
 
-State::State(const int board_[][BOARD_SIZE], const int player,
-             const int lastX, const int lastY)
+State::State(const int board_[][BOARD_SIZE], const int player, const int lastX,
+             const int lastY)
     : color(player + 1), winner(EMPTY_GRID), lastX(lastX), lastY(lastY) {
     memcpy(board, board_, sizeof(board));
     memset(occupy, 0, sizeof(occupy));
@@ -53,21 +53,6 @@ vector<Point> State::all_move() const {
             }
         }
     }
-    // static char symbol[] = {'.', 'X', 'O'};
-    //     for (int i = 0; i < BOARD_SIZE; ++i) {
-    //         for (int j = 0; j < BOARD_SIZE; ++j) {
-    //             cout << symbol[board[i][j]] << " ";
-    //         }
-    //         cout << std::endl;
-    //     }
-
-    // if (move.empty()) move.push_back(Point(BOARD_SIZE / 2, BOARD_SIZE / 2));
-    // for (auto&& i : move) {
-    //     cout << i << endl;
-    // }
-    // cout << "---------------" << endl;
-    // getchar();
-    // random_shuffle(move.begin(), move.end());
     return move;
 }
 
@@ -119,18 +104,7 @@ int State::find_winner() {
     for (col = lastY + 1, row = lastX - 1;
          col < BOARD_SIZE && row > 0 && board[row][col] == player; ++col, --row)
         ++j;
-    if (i + j + 1 >= 5) return winner = player; 
-
-    // bool tie = true;
-    // for (int i = 0; i < BOARD_SIZE; ++i) {
-    //     for (int j = 0; j < BOARD_SIZE; ++j) {
-    //         if (board[i][j] == EMPTY_GRID) {
-    //             tie = false;
-    //             break;
-    //         }
-    //     }
-    //     if (!tie) break;
-    // }
+    if (i + j + 1 >= 5) return winner = player;
 
     return winner = tie() ? TIE : EMPTY_GRID;
 }

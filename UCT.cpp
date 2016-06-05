@@ -1,18 +1,16 @@
 #include "UCT.h"
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <utility>
-#include <cassert>
 #include "math.h"
 #include "node.h"
 using namespace std;
 
 Xorshift Tree::random(32563345, 12343, 5646546, 123446543);
 
-
-Tree::Tree(const State& s) : root_state(s) {
-    max_itr = 100000;
-    max_time = 5.0;
+Tree::Tree(const State& s, const int max_itr, const double max_time)
+    : root_state(s), max_itr(max_itr), max_time(max_time) {
     root = new Node(s, Point(-1, -1));
 }
 
@@ -37,8 +35,6 @@ Point Tree::UCT() {
                 // expansion
                 p = node->get_move();
                 state.move(p);
-                // cout << state << endl << endl;
-                // getchar();
                 node = node->add_child(state, p);
                 break;
             } else {
@@ -53,7 +49,6 @@ Point Tree::UCT() {
                 p = random_move();
             } while (!state.can_move(p));
             state.move(p);
-            // cout << state << endl << endl;
         }
 
         // back propagation
@@ -69,17 +64,6 @@ Point Tree::UCT() {
             break;
         }
     }
-   
-    // Node* ptr = root->children;
-    // while (ptr != nullptr) {
-    //     cout << "Child from " << ptr->from();
-    //     cout << "win: " << ptr->win << endl;
-    //     cout << "visit: " << ptr->visit << endl;
-    //     cout << "winning rate: " << ptr->win / ptr->visit << endl;
-    //     cout << "score: " << ptr->score << endl;
-    //     cout << endl;
-    //     ptr = ptr->sibling;
-    // }
-    // getchar();
+
     return root->select_child(0.0)->from();
 }

@@ -29,6 +29,8 @@ public:
         win += reward;
     }
 
+    void info() const;
+
     Point get_move();
     Point from() const { return move_from; }
     Node* select_child(double c = 8.0);

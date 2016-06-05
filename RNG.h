@@ -28,7 +28,6 @@ public:
     }
 
 private:
-    /* The state must be seeded so that it is not everywhere zero. */
     uint32_t x, y, z, w;
 };
 

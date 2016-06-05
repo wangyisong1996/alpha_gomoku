@@ -1,5 +1,7 @@
 #include "node.h"
 #include "math.h"
+#include <iostream>
+using namespace std;
 
 Node::Node(const State& s, const Point& p, Node* parent, Node* sibling)
     : win(0.0),
@@ -33,11 +35,23 @@ Node* Node::select_child(const double c) {
         inv = 1.0 / p->visit;
         p->score = p->win * inv + sqrt(c * log(this->visit) * inv);
         if (p->score >= max) {
-          best_child = p;
-          max = p->score;
+            best_child = p;
+            max = p->score;
         }
         p = p->sibling;
     }
-    // assert(best_child != nullptr);
     return best_child;
+}
+
+void Node::info() const {
+    Node* ptr = children;
+    while (ptr != nullptr) {
+        cout << "Child from " << ptr->from();
+        cout << "win: " << ptr->win << endl;
+        cout << "visit: " << ptr->visit << endl;
+        cout << "winning rate: " << ptr->win / ptr->visit << endl;
+        cout << "score: " << ptr->score << endl;
+        cout << endl;
+        ptr = ptr->sibling;
+    }
 }
