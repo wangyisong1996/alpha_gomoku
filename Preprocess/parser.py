@@ -3,6 +3,7 @@
 import re
 import os
 import csv
+import numpy as np
 
 path = "./renju_csv/"
 base = ord('a') - 1
@@ -13,52 +14,28 @@ fieldnames = ["x", "y"]
 
 
 def writecsv(num, moves):
-    with open(path + "record" + str(num) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow({"x": str(ord(move[0]) - base), "y": move[1:]})
-    with open(path + "record" + str(num + 1) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow(
-                {"x": str(16 - (ord(move[0]) - base)), "y": move[1:]})
-    with open(path + "record" + str(num + 2) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow(
-                {"x": str(ord(move[0]) - base), "y": str(16 - int(move[1:]))})
-    with open(path + "record" + str(num + 3) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow(
-                {"x": str(16 - (ord(move[0]) - base)), "y": str(16 - int(move[1:]))})
-    with open(path + "record" + str(num + 4) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow(
-                {"x": move[1:], "y": str(16 - (ord(move[0]) - base))})
-    with open(path + "record" + str(num + 5) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow(
-                {"x": str(16 - (ord(move[0]) - base)), "y": str(16 - int(move[1:]))})
-    with open(path + "record" + str(num + 6) + ".csv", "w") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for move in moves:
-            writer.writerow(
-                {"x": str(16 - int(move[1:])), "y": str(ord(move[0]) - base)})
+    N = len(moves)
+    act = np.zeros((7, N, 2), dtype=np.uint8)
+    for i, move in zip(range(N), moves):
+        act[0, i, ] = [ord(move[0]) - base, int(move[1:])]
+        act[1, i, ] = [16 - (ord(move[0]) - base), int(move[1:])]
+        act[2, i, ] = [ord(move[0]) - base, 16 - int(move[1:])]
+        act[3, i, ] = [16 - (ord(move[0]) - base), 16 - int(move[1:])]
+        act[4, i, ] = [int(move[1:]), 16 - (ord(move[0]) - base)]
+        act[5, i, ] = [16 - (ord(move[0]) - base), 16 - int(move[1:])]
+        act[6, i, ] = [16 - int(move[1:]), ord(move[0]) - base]
+
+    for i in range(act.shape[0]):
+        with open(path + "record" + str(num + i) + ".csv", "w") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for j in range(N):
+                writer.writerow({"x": str(act[i, j, 0]), "y": str(act[i, j, 1])})
 
 
 def main():
-    pattern = re.compile(r'<game id.*>\r\n<move>(.*)<\/move>')
-    # pattern = re.compile(r'<game id.*rule=\"1\".*>\r\n.*<\/move>', re.M)
+    pattern = re.compile(r'<game id.*rule=\"1\".*>\r\n<move>(.*)<\/move>')
+    # pattern = re.compile(r'<game id.*rule=\"1\".*>\r\n.*<\/move>')
     datafile = open("renju.rif", "r")
     database = datafile.read()
     datafile.close()
