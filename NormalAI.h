@@ -23,4 +23,4 @@ private:
 	int last_x, last_y;
 };
 
-#endif  // NORMAL_AI_H
+#endif  // __NORMAL_AI_H__

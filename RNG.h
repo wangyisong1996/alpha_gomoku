@@ -31,4 +31,4 @@ private:
     uint32_t x, y, z, w;
 };
 
-#endif  // RNG_H
+#endif  // __RNG_H__

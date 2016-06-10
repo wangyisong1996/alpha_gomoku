@@ -8,6 +8,11 @@
 #include "Constants.h"
 #include "Point.h"
 
+#ifdef USE_CNN
+#include "dcnn.h"
+class CNN;
+#endif
+
 class State {
 public:
     State(const int board_[][BOARD_SIZE], const int player, const int lastX,
@@ -51,6 +56,10 @@ public:
     }
 
 private:
+#ifdef USE_CNN
+    friend class CNN;
+#endif
+
     static const int TIE;
     static const int px[8];
     static const int py[8];
@@ -63,4 +72,4 @@ private:
     int winner;
 };
 
-#endif  // STATE_H
+#endif  // __STATE_H__

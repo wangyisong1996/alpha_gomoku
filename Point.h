@@ -4,13 +4,13 @@
 #include <iostream>
 
 struct Point {
-	int x, y;
-	Point(int x, int y) : x(x), y(y) {}
+    int x, y;
+    Point(int x, int y) : x(x), y(y) {}
 
-	friend std::ostream& operator<<(std::ostream& os, const Point& p) {
+    friend std::ostream& operator<<(std::ostream& os, const Point& p) {
         os << "(" << p.x << ", " << p.y << ")" << std::endl;
         return os;
     }
 };
 
-#endif // POINT_H
+#endif  // __POINT_H__

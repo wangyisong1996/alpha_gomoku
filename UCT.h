@@ -3,27 +3,29 @@
 
 #include <cstdlib>
 #include <ctime>
-#include <vector>
 #include <iostream>
+#include <vector>
 #include "Constants.h"
+#include "Node.h"
 #include "RNG.h"
 #include "State.h"
-#include "node.h"
 
 class Node;
 
 class Tree {
 public:
-    Tree(const State& s, const int max_itr = 100000, const double max_time = 2.0);
+    Tree(const State& s, const int round, const int max_itr = 100000,
+         const double max_time = 1);
     ~Tree();
 
     Point UCT();
 
 private:
     void destory(Node* p);
-    
+
     Point random_move() {
-        return Point(random.rand() % BOARD_SIZE, random.rand() % BOARD_SIZE);;
+        return Point(random.rand() % BOARD_SIZE, random.rand() % BOARD_SIZE);
+        ;
     }
 
     static Xorshift random;
@@ -34,4 +36,4 @@ private:
     double max_time;
 };
 
-#endif  // UCT_H
+#endif  // __UCT_H__

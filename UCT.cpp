@@ -3,15 +3,29 @@
 #include <cassert>
 #include <iostream>
 #include <utility>
+#include "Node.h"
 #include "math.h"
-#include "node.h"
 using namespace std;
+
+#ifdef USE_CNN
+#include "dcnn.h"
+#endif
 
 Xorshift Tree::random(32563345, 12343, 5646546, 123446543);
 
-Tree::Tree(const State& s, const int max_itr, const double max_time)
+Tree::Tree(const State& s, const int round, const int max_itr,
+           const double max_time)
     : root_state(s), max_itr(max_itr), max_time(max_time) {
-    root = new Node(s, Point(-1, -1));
+#ifdef USE_CNN
+    CNN cnn(s.get_color());
+    if (round >= 6) {
+        root = new Node(s, cnn.get_moves(s));
+    } else {
+        root = new Node(s);
+    }
+#else
+    root = root = new Node(s);
+#endif
 }
 
 Tree::~Tree() { destory(root); }
