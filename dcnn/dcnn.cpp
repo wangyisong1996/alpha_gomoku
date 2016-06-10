@@ -32,7 +32,8 @@ CNN::CNN(const int color) : color(color) {
 
 CNN::~CNN() {}
 
-int CNN::connect_num(const int board[][BOARD_SIZE], const int x, const int y) const {
+int CNN::connect_num(const int board[][BOARD_SIZE], const int x,
+                     const int y) const {
     int i, j, col, row;
     int player = board[x][y];
     bool flag = false;
@@ -127,15 +128,19 @@ vector<Point> CNN::get_moves(const State &s) const {
     blob->set_cpu_data(data);
     std::vector<Blob<float> *> bottom;
     bottom.push_back(blob);
-    assert(net);
-    const std::vector<Blob<float> *> &rr = net->Forward(bottom);
 
-    std::vector<std::pair<int, float> > result(size2);
+    net->Forward(bottom);
+    Blob<float>* output_layer = net->output_blobs()[0];
+
+    const float* begin = output_layer->cpu_data();
+    const float* end = begin + output_layer->channels();
+    std::vector<float> rr(begin, end);
+
+    std::vector<std::pair<int, float> > result;
     for (int i = 0; i < size2; i++) {
-        result[i].first = i;
-        result[i].second = rr[0]->cpu_data()[i];
+        result.push_back(std::make_pair(i, rr[i]));
     }
-
+    std::cout << result << std::endl;
 
     sort(result.begin(), result.end(),
          [](pair<int, float> &a, pair<int, float> &b) {
@@ -147,9 +152,7 @@ vector<Point> CNN::get_moves(const State &s) const {
         int tx = result[i].first / BOARD_SIZE;
         int ty = result[i].first % BOARD_SIZE;
         if (s.board[tx][ty] == EMPTY_GRID) {
-        	recommend.push_back(Point(tx, ty));
-        } else {
-        	--i;
+            recommend.push_back(Point(tx, ty));
         }
     }
 

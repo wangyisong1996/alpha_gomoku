@@ -13,10 +13,9 @@ class Tree;
 class Node {
 public:
     Node(const State& s, const Point& p = Point(-1, -1), Node* parent = nullptr, Node* sibling = nullptr);
-// #ifdef USE_CNN
     // This constructor is used for creating root node
     Node(const State& s, std::vector<Point> move);
-// #endif
+
     ~Node();
 
     Node* add_child(const State& s, const Point& p) {

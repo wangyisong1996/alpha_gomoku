@@ -18,7 +18,10 @@ else
 endif
 
 ifeq ($(USE_CNN), 1)
-	LDFLAGS+=-lboost_system -lcaffe
+	LDFLAGS+=-lboost_system -L ~/caffe/distribute/lib -lcaffe -lglog
+	CPPFLAGS+=-I ~/caffe/distribute/include
+	SOURCES+=dcnn.cpp
+	OBJECTS+=dcnn.o
 endif
 
 ifeq ($(DEBUG), 1)
@@ -72,6 +75,10 @@ RandomAI.o: RandomAI.cpp
 	$(CXX) $^ $(CPPFLAGS) -c -o $@
 
 math.o: math.cpp
+	@echo Now Compiling $< ...
+	$(CXX) $^ $(CPPFLAGS) -c -o $@
+
+dcnn.o: dcnn.cpp
 	@echo Now Compiling $< ...
 	$(CXX) $^ $(CPPFLAGS) -c -o $@
 

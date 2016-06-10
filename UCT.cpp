@@ -18,8 +18,14 @@ Tree::Tree(const State& s, const int round, const int max_itr,
     : root_state(s), max_itr(max_itr), max_time(max_time) {
 #ifdef USE_CNN
     CNN cnn(s.get_color());
-    if (round >= 6) {
-        root = new Node(s, cnn.get_moves(s));
+    if (round >= 10) {
+        vector<Point> recommend = cnn.get_moves(s);
+        if (recommend.empty()) {
+            cout << "Network isn't working!" << endl;
+            root = new Node(s);
+        } else {
+            root = new Node(s, recommend);
+        }
     } else {
         root = new Node(s);
     }
