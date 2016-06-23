@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# display the details of the database
 import lmdb
 
 env = lmdb.open("train", map_size=1099511627776)

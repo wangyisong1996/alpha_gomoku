@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# create the LMDB file
+
 import numpy as np
 import pandas as pd
 
