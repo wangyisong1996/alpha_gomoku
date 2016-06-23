@@ -5,7 +5,7 @@
 
 class RNG {
 public:
-    RNG() {}
+    RNG();
     virtual ~RNG() = 0;
 };
 
