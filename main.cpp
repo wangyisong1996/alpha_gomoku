@@ -17,6 +17,7 @@
 
 Graphics *g = NULL;
 
+const int INVALID_GAME_STATE = -1;
 const int GAME_NOT_STARTED = 0;
 const int GAME_OVER = 1;
 const int BLACK_TURN = 2;
@@ -25,6 +26,7 @@ const int WHITE_TURN = 3;
 const double AI_WAIT_TIME = 0.2;
 
 int game_state = GAME_NOT_STARTED;
+int last_game_state = INVALID_GAME_STATE;
 
 static bool last_key_state[350] = {0};
 static bool now_key_state[350] = {0};
@@ -345,18 +347,33 @@ bool loop_func() {
     t_now = glfwGetTime();
 
 	check_key_states();
+	
+	int now_game_state = game_state;
 
 	if (game_state == GAME_NOT_STARTED) {
+		if (last_game_state != game_state) {
+			printf("1 -- Player vs. Player\n");
+			printf("2 -- Player(black) vs. AI\n");
+			printf("3 -- Player(white) vs. AI\n");
+			printf("4 -- AI vs. AI\n");
+			fflush(stdout);
+		}
 		process_game_not_started();
 	} else if (game_state == BLACK_TURN) {
 		process_black_turn();
 	} else if (game_state == WHITE_TURN) {
 		process_white_turn();
 	} else if (game_state == GAME_OVER) {
+		if (last_game_state != now_game_state) {
+			printf("Game over! Press escape key to return.\n");
+			fflush(stdout);
+		}
 		process_game_over();
 	} else {
 		// WTF??
 	}
+	
+	last_game_state = now_game_state;
 
 	return true;
 }
